@@ -67,7 +67,8 @@ func DeleteAndGet[T any](key string) (T, bool) {
 }
 
 // Delete 删除元素
-func Delete[T any](key string) {
+// func Delete[T any](key string) {
+func Delete(key string) { // ???
 	log.Print("Delete ", key)
 	database.MemoryTree.Delete(key)
 	database.Wal.Write(kv.Value{
