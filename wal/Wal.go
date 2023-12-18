@@ -33,6 +33,7 @@ func (w *Wal) Init(dir string) *sortTree.Tree {
 		log.Println("The wal.log file cannot be created")
 		panic(err)
 	}
+	// 初始化
 	w.f = f
 	w.path = walPath
 	w.lock = &sync.Mutex{}
@@ -91,6 +92,7 @@ func (w *Wal) loadToMemory() *sortTree.Tree {
 		// 将元素的所有字节读取出来，并还原为 kv.Value
 		index += 8
 		dataArea := data[index:(index + int64(dataLen))]
+		// 应该使用kv.Decode(dataArea) ???
 		var value kv.Value
 		err = json.Unmarshal(dataArea, &value)
 		if err != nil {
@@ -126,7 +128,7 @@ func (w *Wal) Write(value kv.Value) {
 		log.Println("Failed to write the wal.log")
 		panic(err)
 	}
-
+	// 可以考虑bufio.Writer
 	err = binary.Write(w.f, binary.LittleEndian, data)
 	if err != nil {
 		log.Println("Failed to write the wal.log")

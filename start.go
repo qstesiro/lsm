@@ -42,7 +42,7 @@ func initDatabase(dir string) {
 	// 如果目录不存在，则为空数据库
 	if _, err := os.Stat(dir); err != nil {
 		log.Printf("The %s directory does not exist. The directory is being created\r\n", dir)
-		err := os.Mkdir(dir, 0666)
+		err := os.Mkdir(dir, 0666) // 权限: -rw-rw-rw-
 		if err != nil {
 			log.Println("Failed to create the database directory")
 			panic(err)
