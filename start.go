@@ -28,6 +28,7 @@ func Start(con config.Config) {
 	// 检查压缩数据库文件
 	database.TableTree.Check()
 	// 启动后台线程
+	// 是否可以考虑使用chan处理 ???
 	go Check()
 }
 

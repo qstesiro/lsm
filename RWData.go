@@ -37,7 +37,7 @@ func Set[T any](key string, value T) bool {
 	}
 
 	_, _ = database.MemoryTree.Set(key, data)
-
+	// 先写wal可能更好 ???
 	// 写入 wal.log
 	database.Wal.Write(kv.Value{
 		Key:     key,
@@ -79,6 +79,7 @@ func Delete(key string) { // ???
 }
 
 // 将字节数组转为类型对象
+// 函数名称为getValue是不是更好 ???
 func getInstance[T any](data []byte) (T, bool) {
 	var value T
 	err := json.Unmarshal(data, &value)

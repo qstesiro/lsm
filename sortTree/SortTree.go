@@ -21,6 +21,7 @@ type Tree struct {
 }
 
 // Init 初始化树
+// 直接NewTree不是更好 ???
 func (tree *Tree) Init() {
 	tree.rWLock = &sync.RWMutex{}
 }
@@ -77,7 +78,7 @@ func (tree *Tree) Set(key string, value []byte) (oldValue kv.Value, hasOld bool)
 		},
 	}
 
-	if current == nil {
+	if current == nil { // 新树情况
 		tree.root = newNode
 		tree.count++
 		return kv.Value{}, false
@@ -172,6 +173,7 @@ func (tree *Tree) Delete(key string) (oldValue kv.Value, hasOld bool) {
 }
 
 // GetValues 获取树中的所有元素，这是一个有序元素列表
+// 基于栈的中根序遍历(也可以使用递归)
 func (tree *Tree) GetValues() []kv.Value {
 	tree.rWLock.RLock()
 	defer tree.rWLock.RUnlock()
@@ -201,6 +203,7 @@ func (tree *Tree) GetValues() []kv.Value {
 	return values
 }
 
+// 没有交换动作 ???
 func (tree *Tree) Swap() *Tree {
 	tree.rWLock.Lock()
 	defer tree.rWLock.Unlock()
