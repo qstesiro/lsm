@@ -30,6 +30,20 @@ func (tree *TableTree) GetLevelSize(level int) int64 {
 	return size
 }
 
+/*
+
+索引是从数据区开始！
+0 ─────────────────────────────────────────────────────────►
+◄───────────────────────────
+          dataLen          ◄──────────────────
+                                indexLen     ◄──────────────┐
+┌──────────────────────────┬─────────────────┬──────────────┤
+│                          │                 │              │
+│          数据区          │   稀疏索引区    │    元数据    │
+│                          │                 │              │
+└──────────────────────────┴─────────────────┴──────────────┘
+*/
+
 // 将数据写入文件
 func writeDataToFile(filePath string, dataArea []byte, indexArea []byte, meta MetaInfo) {
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)

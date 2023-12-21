@@ -1,5 +1,23 @@
 package ssTable
 
+import (
+	"sync"
+)
+
+// TableTree 树
+type TableTree struct {
+	levels []*tableNode // 无头链表,每个索引位代表一层
+	// 用于避免进行插入或压缩、删除 SSTable 时发生冲突
+	lock *sync.RWMutex
+}
+
+// 链表，表示每一层的 SSTable
+type tableNode struct {
+	index int
+	table *SSTable
+	next  *tableNode
+}
+
 // 插入一个 SSTable 到指定层
 func (tree *TableTree) insert(table *SSTable, level int) (index int) {
 	tree.lock.Lock()
