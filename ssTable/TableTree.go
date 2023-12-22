@@ -46,17 +46,6 @@ func (tree *TableTree) getMaxIndex(level int) int {
 	return 0
 }
 
-// 获取该层有多少个 SSTable
-func (tree *TableTree) getCount(level int) int {
-	node := tree.levels[level]
-	count := 0
-	for node != nil {
-		count++
-		node = node.next
-	}
-	return count
-}
-
 // 获取一个 db 文件所代表的 SSTable 的所在层数和索引
 func getLevel(name string) (level int, index int) {
 	// 0.1.db

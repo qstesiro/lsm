@@ -1,6 +1,7 @@
 package ssTable
 
 import (
+	"log"
 	"os"
 	"sync"
 )
@@ -13,6 +14,7 @@ type SSTable struct {
 	// 元数据
 	tableMetaInfo MetaInfo
 	// 文件的稀疏索引列表,用于数据查询
+	// 对于level比较大的情况数据会非常大,spareIndex全量存储在内存中不现实 ???
 	sparseIndex map[string]Position
 	// 排序后的key列表,用于规并排序
 	sortIndex []string
@@ -28,4 +30,13 @@ func (table *SSTable) Init(path string) {
 	table.filePath = path
 	table.lock = &sync.Mutex{}
 	table.loadFileHandle()
+}
+
+// GetDbSize 获取 .db 数据文件大小
+func (table *SSTable) GetDbSize() int64 {
+	info, err := os.Stat(table.filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return info.Size()
 }

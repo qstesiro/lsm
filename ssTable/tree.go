@@ -46,3 +46,25 @@ func (tree *TableTree) insert(table *SSTable, level int) (index int) {
 	}
 	return newNode.index
 }
+
+// GetLevelSize 获取指定层的 SSTable 总大小
+func (tree *TableTree) GetLevelSize(level int) int64 {
+	var size int64
+	node := tree.levels[level]
+	for node != nil {
+		size += node.table.GetDbSize()
+		node = node.next
+	}
+	return size
+}
+
+// 获取该层有多少个 SSTable
+func (tree *TableTree) getCount(level int) int {
+	node := tree.levels[level]
+	count := 0
+	for node != nil {
+		count++
+		node = node.next
+	}
+	return count
+}

@@ -28,6 +28,7 @@ func (tree *TableTree) majorCompaction() {
 		if tree.getCount(levelIndex) > con.PartSize || tableSize > levelMaxSize[levelIndex] {
 			tree.majorCompactionLevel(levelIndex)
 		}
+		// 当某层没有发生变化则其下层也不需要再判断可以提前退出 ???
 	}
 }
 
@@ -46,6 +47,7 @@ func (tree *TableTree) majorCompactionLevel(level int) {
 	currentNode := tree.levels[level]
 
 	// 将当前层的 SSTable 合并到一个有序二叉树中
+	// 层级较大内存风险 ???
 	memoryTree := &sortTree.Tree{}
 	memoryTree.Init()
 
@@ -56,7 +58,7 @@ func (tree *TableTree) majorCompactionLevel(level int) {
 		if int64(len(tableCache)) < table.tableMetaInfo.dataLen {
 			tableCache = make([]byte, table.tableMetaInfo.dataLen)
 		}
-		newSlice := tableCache[0:table.tableMetaInfo.dataLen]
+		newSlice := tableCache[0:table.tableMetaInfo.dataLen] // 还需要再切片吗 ???
 		// 读取 SSTable 的数据区
 		if _, err := table.f.Seek(0, 0); err != nil {
 			log.Println(" error open file ", table.filePath)
@@ -87,9 +89,9 @@ func (tree *TableTree) majorCompactionLevel(level int) {
 	newLevel := level + 1
 	// 目前最多支持 10 层
 	if newLevel > 10 {
-		newLevel = 10
+		newLevel = 10 // 索引溢出 ???
 	}
-	// 创建新的 SSTable
+	// 创建新的 SSTable并插入目标层的最后
 	tree.createTable(values, newLevel)
 	// 清理该层的文件
 	oldNode := tree.levels[level]
